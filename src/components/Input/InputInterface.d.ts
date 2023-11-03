@@ -59,5 +59,26 @@ export interface InputInterface {
 	value: string;
 	label: string;
 	placeholder: string;
-	type?: string;
+	type?:
+		| "text"
+		| "password"
+		| "email"
+		| "number"
+		| "tel"
+		| "url"
+		| "search"
+		| "date"
+		| "time"
+		| "month"
+		| "week"
+		| "color"
+		| "range"
+		| "checkbox"
+		| "radio"
+		| "file"
+		| "submit"
+		| "reset"
+		| "hidden"
+		| "image"
+		| "button";
 }

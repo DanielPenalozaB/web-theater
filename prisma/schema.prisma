@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("PRISMA_DATABASE_URL")
+}
+
+model User {
+    id             Int              @id @default(autoincrement())
+    createdAt      DateTime         @default(now())
+    modifiedAt     DateTime         @updatedAt
+    username       String           @db.VarChar(50)
+    image          String?          @db.LongText
+    email          String?          @unique @db.VarChar(255)
+    password       String?          @db.VarChar(255)
+    isAdmin        Boolean          @default(false)
+    emailConfirmed Boolean          @default(false)
+    favoriteMovies FavoriteMovies[]
+    accounts       Account[]
+}
+
+model Movie {
+    id          Int              @id @default(autoincrement())
+    rating      Rating           @relation(fields: [ratingId], references: [id])
+    producer    Producer         @relation(fields: [producerId], references: [id])
+    ratingId    Int
+    producerId  Int
+    title       String           @db.VarChar(255)
+    description String?          @db.VarChar(500)
+    releaseYear Int?
+    url         String           @db.LongText
+    thumbnail   String           @db.LongText
+    duration    Int
+    favorites   FavoriteMovies[]
+    genres      MoviesxGenres[]
+    MoviesxCast MoviesxCast[]
+}
+
+model FavoriteMovies {
+    id        Int      @id @default(autoincrement())
+    user      User     @relation(fields: [userId], references: [id])
+    movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+    userId    Int
+    movieId   Int
+    createdAt DateTime @default(now())
+}
+
+model Genre {
+    id            Int             @id @default(autoincrement())
+    name          String          @db.VarChar(50)
+    MoviesxGenres MoviesxGenres[]
+}
+
+model MoviesxGenres {
+    id      Int   @id @default(autoincrement())
+    movie   Movie @relation(fields: [movieId], references: [id])
+    genre   Genre @relation(fields: [genreId], references: [id])
+    movieId Int
+    genreId Int
+}
+
+model Rating {
+    id    Int     @id @default(autoincrement())
+    name  String  @db.VarChar(255)
+    Movie Movie[]
+}
+
+model Producer {
+    id          Int     @id @default(autoincrement())
+    name        String  @db.VarChar(255)
+    description String? @db.VarChar(255)
+    Movie       Movie[]
+}
+
+model Cast {
+    id          Int           @id @default(autoincrement())
+    actor       Actor         @relation(fields: [actorId], references: [id])
+    actorId     Int
+    character   String        @db.VarChar(255)
+    MoviesxCast MoviesxCast[]
+}
+
+model MoviesxCast {
+    id      Int   @id @default(autoincrement())
+    movie   Movie @relation(fields: [movieId], references: [id])
+    cast    Cast  @relation(fields: [castId], references: [id])
+    movieId Int
+    castId  Int
+}
+
+model Actor {
+    id        Int      @id @default(autoincrement())
+    country   Country  @relation(fields: [countryId], references: [id])
+    countryId Int
+    name      String   @db.VarChar(50)
+    birthdate DateTime @db.DateTime()
+    Cast      Cast[]
+}
+
+model Country {
+    id    Int     @id @default(autoincrement())
+    name  String  @db.VarChar(50)
+    Actor Actor[]
+
+    @@unique([name])
+}
+
+model Account {
+    id                Int         @id @default(autoincrement())
+    user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    type              AccountType @relation(fields: [typeId], references: [id])
+    userId            Int
+    typeId            Int
+    createdAt         DateTime    @default(now())
+    modifiedAt        DateTime    @updatedAt
+    provider          String
+    providerAccountId String
+    refreshToken      String?     @db.Text
+    accessToken       String?     @db.Text
+    expiresAt         Int?
+    tokenType         String?
+    scope             String?
+    idToken           String?     @db.Text
+    sessionState      String?
+
+    @@unique([provider, providerAccountId])
+}
+
+model AccountType {
+    id      Int       @id @default(autoincrement())
+    name    String    @db.VarChar(50)
+    Account Account[]
+}
