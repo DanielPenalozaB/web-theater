@@ -116,17 +116,15 @@ model Account {
     type              AccountType @relation(fields: [typeId], references: [id])
     userId            Int
     typeId            Int
-    createdAt         DateTime    @default(now())
-    modifiedAt        DateTime    @updatedAt
     provider          String
     providerAccountId String
-    refreshToken      String?     @db.Text
-    accessToken       String?     @db.Text
-    expiresAt         Int?
-    tokenType         String?
+    refresh_token     String?     @db.Text
+    access_token      String?     @db.Text
+    expires_at        Int?
+    token_type        String?
     scope             String?
-    idToken           String?     @db.Text
-    sessionState      String?
+    id_token          String?     @db.Text
+    session_state     String?
 
     @@unique([provider, providerAccountId])
 }

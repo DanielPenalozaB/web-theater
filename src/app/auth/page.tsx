@@ -1,6 +1,6 @@
 "use client";
 
-import { GoogleIcon, MicrosoftIcon } from "@/assets/svg";
+import { GoogleIcon, GithubIcon } from "@/assets/svg";
 import { Input } from "@/components";
 import axios from "axios";
 import React, { useCallback, useState } from "react";
@@ -63,6 +63,9 @@ export default function Auth() {
 							<button
 								type="button"
 								title="Google"
+								onClick={() =>
+									signIn("google", { callbackUrl: "/" })
+								}
 								className="flex justify-center items-center gap-2 px-4 py-2 w-full bg-white dark:bg-slate-800 hover:bg-gray-200 hover:dark:bg-slate-700 border border-gray-300 dark:border-slate-600 text-sm text-gray-500 dark:text-slate-400 rounded-lg"
 							>
 								<GoogleIcon className="h-5 w-5" />
@@ -70,11 +73,14 @@ export default function Auth() {
 							</button>
 							<button
 								type="button"
-								title="Microsoft"
-								className="flex justify-center items-center gap-2 px-4 py-2 w-full bg-white dark:bg-slate-800 hover:bg-gray-200 hover:dark:bg-slate-700 border border-gray-300 dark:border-slate-600 text-sm text-gray-500 dark:text-slate-400 rounded-lg"
+								title="Github"
+								onClick={() =>
+									signIn("github", { callbackUrl: "/" })
+								}
+								className="flex justify-center items-center gap-2 px-4 py-2 w-full bg-white dark:bg-slate-800 hover:bg-gray-200 hover:dark:bg-slate-700 border border-gray-300 dark:border-slate-600 text-sm text-gray-500 dark:text-slate-400 rounded-lg "
 							>
-								<MicrosoftIcon className="h-5 w-5" />
-								Microsoft
+								<GithubIcon className="h-5 w-5 fill-[#212121] dark:fill-white" />
+								Github
 							</button>
 						</div>
 						<div className="self-center flex items-center gap-2 py-2 w-full max-w-xs">
