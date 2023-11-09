@@ -2,9 +2,13 @@
 
 import { GoogleIcon, MicrosoftIcon } from "@/assets/svg";
 import { Input } from "@/components";
+import axios from "axios";
 import React, { useCallback, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Auth() {
+	const router = useRouter();
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -17,6 +21,35 @@ export default function Auth() {
 			currentVariant === "signin" ? "signup" : "signin"
 		);
 	}, []);
+
+	const login = useCallback(async () => {
+		try {
+			await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+				callbackUrl: "/",
+			});
+
+			router.push("/");
+		} catch (error) {
+			console.log(error);
+		}
+	}, [email, password, router]);
+
+	const register = useCallback(async () => {
+		try {
+			await axios.post("/api/user/register/", {
+				email,
+				name,
+				password,
+			});
+
+			login();
+		} catch (error) {
+			console.log(error);
+		}
+	}, [email, name, password, login]);
 
 	return (
 		<div className="relative h-full w-full bg-indigo-500 bg-[url('/images/hero.jpg')] bg-blend-multiply bg-no-repeat bg-center bg-fixed bg-cover">
@@ -143,7 +176,13 @@ export default function Auth() {
 										Forgot password?
 									</button>
 								)}
-								<button className="inline-flex w-full justify-center rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 disabled:bg-gray-400 disabled:cursor-not-allowed">
+								<button
+									type="submit"
+									onClick={
+										variant === "signin" ? login : register
+									}
+									className="inline-flex w-full justify-center rounded-lg bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+								>
 									{variant === "signin"
 										? "Sign in"
 										: "Sign up"}
